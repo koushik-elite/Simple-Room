@@ -1,0 +1,569 @@
+<html>
+
+<head>
+
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style type="text/css">
+
+    body {
+
+		background-color: #000;
+
+		margin: 0px;
+
+		overflow: hidden;
+
+	}
+
+  </style>
+
+  <title>Three JS Simple Room</title>
+
+<script type="text/javascript">//<![CDATA[
+
+window.onload=function(){
+
+// Simple three.js example
+
+
+
+var mesh, renderer, scene, camera, controls, light1;
+
+var multiplier = 1;
+
+init();
+
+animate();
+
+
+
+function init() {
+
+
+
+	
+
+	var video = document.createElement( 'video' );
+
+	video.width = window.innerWidth;
+
+	video.height = window.innerHeight;
+
+	video.loop = true;
+
+	//video.muted = true;
+
+	video.src = 'videos/BigBuckBunny_640x360.mp4';
+
+	video.setAttribute( 'webkit-playsinline', 'webkit-playsinline' );
+
+	video.play();
+
+
+
+    // renderer
+
+    renderer = new THREE.WebGLRenderer();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+    renderer.setClearColor( 0x889988 );
+
+    document.body.appendChild( renderer.domElement );
+
+
+
+    // scene
+
+    scene = new THREE.Scene();
+
+    
+
+    // camera
+
+    camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 );
+
+    camera.position.set( 20, 20, 20 );
+
+    scene.add( camera ); // required, since adding light as child of camera
+
+
+
+    // controls
+
+    controls = new THREE.OrbitControls( camera );
+
+    controls.enableZoom = true;
+
+    controls.enablePan = true;
+
+    controls.maxPolarAngle = Math.PI / 1.6;
+
+    
+
+    // ambient
+
+    //scene.add( new THREE.AmbientLight( 0x444444 ) );
+
+	
+
+	var videotexture = new THREE.VideoTexture( video );
+
+	videotexture.minFilter = THREE.LinearFilter;
+
+	videotexture.format = THREE.RGBFormat;
+
+	
+
+	var texture = new THREE.TextureLoader().load( "images/checkerboard.jpg" );
+
+	texture.wrapS = THREE.RepeatWrapping;
+
+	texture.wrapT = THREE.RepeatWrapping;
+
+	
+
+	var texture1 = new THREE.TextureLoader().load( "images/a9272cfb3b55347bb930bf13a7efd5f2.jpg?new123" );
+
+	texture1.wrapS = THREE.RepeatWrapping;
+
+	texture1.wrapT = THREE.RepeatWrapping;
+
+	//texture1.offset.set( 0, 0 );
+
+    texture1.repeat.set( 4, 4 );
+
+	//texture1.scale.x = 1;
+
+	
+
+	var texture2 = new THREE.TextureLoader().load( "images/Gecko_TV_Stands.jpg?new1234" );
+
+	texture2.wrapS = THREE.RepeatWrapping;
+
+	texture2.wrapT = THREE.RepeatWrapping;	
+
+	
+
+	var doortexture = new THREE.TextureLoader().load( "images/enddoor.jpg" );
+
+	doortexture.wrapS = THREE.RepeatWrapping;
+
+	doortexture.wrapT = THREE.RepeatWrapping;
+
+	
+
+	var toptexture = new THREE.TextureLoader().load( "images/topstar.jpg" );
+
+	toptexture.wrapS = THREE.RepeatWrapping;
+
+	toptexture.wrapT = THREE.RepeatWrapping;	
+
+    toptexture.repeat.set( 2, 1 );
+
+	
+
+	var pictureMaterial = new THREE.MeshPhongMaterial({
+
+		map : texture,
+
+		side: THREE.BackSide
+
+	});
+
+	
+
+	var pictureLeft = new THREE.MeshPhongMaterial({
+
+		map : texture1,
+
+		//color : 0x808000,
+
+		side: THREE.BackSide
+
+	});
+
+	
+
+	var pictureFront = new THREE.MeshPhongMaterial({
+
+		map : texture2,
+
+		//color : 0x808000,
+
+		side: THREE.BackSide
+
+	});
+
+	
+
+	var doorFront = new THREE.MeshPhongMaterial({
+
+		map : doortexture,
+
+		//color : 0x808000,
+
+		side: THREE.BackSide
+
+	});
+
+	
+
+	var topFront = new THREE.MeshPhongMaterial({
+
+		map : texture1,
+
+		//color : 0x808000,
+
+		side: THREE.BackSide
+
+	});
+
+	
+
+	
+
+	var VideoFront = new THREE.MeshPhongMaterial({
+
+		map : videotexture,
+
+		//color : 0x808000,
+
+		side: THREE.FrontSide
+
+	});
+
+	
+
+	//pictureLeft.ambient.set( 0x808080 );
+
+
+
+	var borderMaterial = new THREE.MeshPhongMaterial({
+
+		color : 0x000000,
+
+		transparent: false,
+
+		side: THREE.BackSide
+
+	});
+
+	
+
+	var OuterMaterial = new THREE.MeshPhongMaterial({
+
+		color : 0x000000,
+
+		transparent: false,
+
+		side: THREE.FrontSide
+
+	});
+
+    
+
+    // light
+
+    //var light = new THREE.PointLight( 0xffffff, 0.8 );
+
+    //camera.add( light );
+
+    
+
+    // axes
+
+    //scene.add( new THREE.AxisHelper( 20 ) );
+
+
+
+    // geometry
+
+    var geometry = new THREE.BoxGeometry( 4 * multiplier, 2 * multiplier, 2 * multiplier );
+
+    
+
+    // material
+
+    var material1 = new THREE.MeshPhongMaterial( {
+
+        color: 'sandybrown'
+
+    } );
+
+    
+
+    // mesh
+
+    mesh = new THREE.Mesh( geometry, material1 );
+
+    mesh.position.set( 2 * multiplier, - 4 * multiplier, 6 * multiplier );
+
+    scene.add( mesh );
+
+	
+
+	var TvGeometry = new THREE.BoxGeometry( 7.7 * multiplier, 4 * multiplier, 0.2 * multiplier );
+
+    
+
+    // material
+
+    var TvMaterial = new THREE.MeshPhongMaterial( {
+
+        color: 'sandybrown'
+
+    } );
+
+    
+
+    // mesh
+
+    TvMesh = new THREE.Mesh( TvGeometry, [
+
+		OuterMaterial, // Left side
+
+		OuterMaterial, // Right side
+
+		OuterMaterial, // Top side   ---> THIS IS THE FRONT
+
+		OuterMaterial, // Bottom side --> THIS IS THE BACK
+
+		OuterMaterial, // Front side
+
+		VideoFront  // Back side
+
+	]);
+
+    TvMesh.position.set( -0.12 * multiplier , 0.05 * multiplier , 10 * multiplier );
+
+    scene.add( TvMesh );
+
+
+
+    // geometry
+
+    var geometry = new THREE.BoxGeometry( 2 * multiplier, 2 * multiplier, 2 * multiplier );
+
+    
+
+    // material
+
+    var material1 = new THREE.MeshPhongMaterial( {
+
+        color: 'gray'
+
+    } );
+
+    
+
+    // mesh
+
+    mesh = new THREE.Mesh( geometry, material1 );
+
+    mesh.position.set( -2 * multiplier , - 4 * multiplier, - 6 * multiplier );
+
+    scene.add( mesh );
+
+	
+
+	var alight = new THREE.AmbientLight( 0x808000, 2.5 ); // soft white light
+
+	//scene.add( alight );
+
+	
+
+	var intensity = 2.5;
+
+	var distance = 25 * multiplier;
+
+	var decay = 2.0;
+
+	var c1 = 0xff0040, c2 = 0x0040ff, c3 = 0x80ff80, c4 = 0xffaa00, c5 = 0x00ffaa, c6 = 0xff1100;
+
+	var sphere = new THREE.SphereGeometry( 0.15, 8, 4 );
+
+	light1 = new THREE.PointLight( c1, intensity, distance, decay );
+
+	light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: c1 } ) ) );
+
+	scene.add( light1 );
+
+	
+
+	light2 = new THREE.PointLight( c2, intensity, distance, decay );
+
+	light2.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: c2 } ) ) );
+
+	scene.add( light2 );
+
+	
+
+	light3 = new THREE.PointLight( c3, intensity, distance, decay );
+
+	light3.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: c3 } ) ) );
+
+	scene.add( light3 );
+
+	
+
+	var floorgeometry = new THREE.PlaneGeometry( 20 * multiplier, 20 * multiplier );
+
+	var floormaterial = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+
+	var floorplane = new THREE.Mesh( floorgeometry, floormaterial );
+
+	floorplane.position.set(0 , ( -10 * multiplier ) / 2, 0);
+
+	
+
+	var a = new THREE.Euler( 1.5700, 0, 0, 'XYZ' );
+
+	
+
+	floorplane.rotation.x = a.x;
+
+	//scene.add( floorplane );	
+
+	
+
+    // geometry
+
+    var geometry = new THREE.BoxGeometry( 20 * multiplier, 10 * multiplier, 20 * multiplier );
+
+    
+
+    // material
+
+	/*
+
+    var material1 = new THREE.MeshPhongMaterial( {
+
+        color: 0xffffff, 
+
+        transparent: true,
+
+        opacity: 0.1
+
+    } );*/
+
+
+
+	var material1 = [pictureLeft, // Left side
+
+		pictureLeft, // Right side
+
+		topFront, // Top side   ---> THIS IS THE FRONT
+
+		pictureMaterial, // Bottom side --> THIS IS THE BACK
+
+		pictureFront, // Front side
+
+		doorFront  // Back side
+
+	];
+
+    
+
+    // mesh
+
+    roommesh = new THREE.Mesh( geometry, material1 );
+
+    scene.add( roommesh );
+
+
+
+    // mesh
+
+    //mesh11 = new THREE.Mesh( geometry, material2 );
+
+    //scene.add( mesh11 );
+
+    
+
+}
+
+
+
+function animate() {
+
+
+
+	var time = Date.now() * 0.0055;	
+
+	
+
+	light1.position.x = Math.sin( time * 0.7 ) * 8 * multiplier;
+
+	light1.position.y = Math.cos( time * 0.5 ) * 4 * multiplier;
+
+	light1.position.z = Math.cos( time * 0.3 ) * 8 * multiplier;
+
+	
+
+	//time += 10000;
+
+	
+
+	light2.position.x = Math.sin( time * 0.3 ) * 8 * multiplier;
+
+	light2.position.y = Math.cos( time * 0.5 ) * 4 * multiplier;
+
+	light2.position.z = Math.cos( time * 0.7 ) * 8 * multiplier;
+
+	
+
+	//time += 10000;
+
+	
+
+	light3.position.x = Math.sin( time * 0.5 ) * 8 * multiplier;
+
+	light3.position.y = Math.cos( time * 0.3 ) * 4 * multiplier;
+
+	light3.position.z = Math.cos( time * 0.7 ) * 8 * multiplier;
+
+
+
+    requestAnimationFrame( animate );
+
+    
+
+    controls.update();
+
+
+
+    renderer.render( scene, camera );
+
+
+
+}
+
+
+
+}//]]> 
+
+
+
+</script>
+
+
+
+  
+
+</head>
+
+
+
+<body>
+
+  <script src="http://threejs.org/build/three.min.js"></script>
+
+<script src="http://threejs.org/examples/js/controls/OrbitControls.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<html>
+<head> 
+
+  <style type="text/css">
+    #info {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    color: #ffff00
+}
+body {
+    // margin: 0;
+    overflow: hidden;
+}
+  </style>
+
+  <title>spotlight by jmchen</title>
+
+  
+</head>
+
+<body>
+  <div id="info">spotlight demo
+    <br>Press Z to toggle</div>
+  <script src="http://threejs.org/build/three.min.js"></script>
+<script src="http://threejs.org/examples/js/controls/OrbitControls.js"></script>
+    
+</script>
+<script src="http://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
+<script type="text/javascript">//<![CDATA[
+
+var camera, scene, renderer, geometry, material, mesh, light, controls;
+var rt, alpha, h, ly;
+var box, angle = 0;
+var keyboard = new KeyboardState(), turn = true;
+
+init();
+animate();
+
+function init() {
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+    camera.position.z = 500;
+    scene.add(camera);
+
+    // lamp parameters
+    ly = 150;
+    rt = 30;
+    h = 140;
+    alpha = Math.PI / 6;
+    var rb = rt + h * Math.tan(alpha);
+
+    geometry = new THREE.CylinderGeometry(rt, rb, h, 20, 1, true);
+    material = new THREE.MeshBasicMaterial({
+        side: THREE.DoubleSide,
+        wireframe: true,
+        color: 0xffff00
+    });
+    mesh = new THREE.Mesh(geometry, material);
+    mesh.position.setY(-h / 2); // so that top face is on XZ plane
+
+    lamp = new THREE.Object3D();
+    lamp.add(mesh);
+    lamp.position.setY(ly);
+    scene.add(lamp);
+
+    // orbiting box
+    box = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20),
+                         new THREE.MeshLambertMaterial({color:0xff1234}));
+    scene.add(box);
+
+    // spotlight
+    light = new THREE.SpotLight(0xffffff, 1.5);
+    light.position.set(0, ly, 0);
+    light.angle = alpha;
+    light.exponent = 10;
+    scene.add(light);
+    light.target = box; // light follows the box
+
+    // floor
+    var floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400, 30, 30),
+    new THREE.MeshLambertMaterial());
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    var amblight = new THREE.AmbientLight(0x888888); // soft white light
+    scene.add(amblight);
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x333333);
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    document.body.appendChild(renderer.domElement);
+}
+
+function animate() {
+    controls.update();
+    keyboard.update();
+    
+    if (keyboard.down("Z")) turn = !turn;
+    if (turn)
+        angle += 0.02;    // box orbiting on the floor
+    box.position.set(90 * Math.cos(angle), 10, -90 * Math.sin(angle));
+
+    // rotating lamp
+    var axis = new THREE.Vector3();
+    var d = new THREE.Vector3();
+    var p = new THREE.Vector3();
+    p = box.position.clone().sub(new THREE.Vector3(0, ly, 0)).normalize();
+    d = new THREE.Vector3(0, -1, 0);
+    axis.crossVectors(d, p).normalize();
+    var rotangle = Math.acos(d.dot(p));
+
+    // undocumented API
+    lamp.setRotationFromAxisAngle(axis, rotangle);
+
+    requestAnimationFrame(animate);
+    render();
+}
+
+function render() {
+    renderer.render(scene, camera);
+}
+
+window.focus();
+//]]> 
+
+</script>
+
+</body></html>
