@@ -94,7 +94,7 @@ function init() {
 
     // controls
 
-    controls = new THREE.OrbitControls( camera );
+    controls = new THREE.OrbitControls( camera,renderer.domElement );
 
     controls.enableZoom = true;
 
