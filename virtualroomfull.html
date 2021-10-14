@@ -68,7 +68,7 @@ function init() {
 
     renderer = new THREE.WebGLRenderer();
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( window.innerWidtsafasdfh, window.innerHeight );
 
     renderer.setClearColor( 0x889988 );
 
@@ -94,7 +94,7 @@ function init() {
 
     // controls
 
-    controls = new THREE.OrbitControls( camera );
+    controls = new THREE.OrbitControls( camera,renderer.domElement );
 
     controls.enableZoom = true;
 
